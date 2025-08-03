@@ -3,12 +3,12 @@ import {
   NotFoundException,
   Injectable,
 } from '@nestjs/common';
-import { FilmsRepository } from '../repository/films.repository';
+import { FilmsRepositoryPSQL } from 'src/repository/filmsPSQL.repository';
 import { OrderDTO, TicketDTO } from './dto/order.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(private readonly repository: FilmsRepository) {}
+  constructor(private readonly repository: FilmsRepositoryPSQL) {}
 
   async createOrder(
     order: OrderDTO,
@@ -23,9 +23,7 @@ export class OrderService {
       const schedule = await this.repository.findSchedule(film.id);
       const session = schedule.find((item) => item.id === ticket.session);
       if (!session) throw new NotFoundException('сеанс не найден');
-      if (session.taken.includes(seat)) {
-        throw new BadRequestException('место занято');
-      }
+
       await this.repository.addSeat(film.id, session.id, seat);
     }
 

@@ -7,7 +7,13 @@ export const configProvider = {
     //TODO прочесть переменнные среды
     database: {
       driver: process.env.DATABASE_DRIVER || 'mongodb',
-      url: process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/prac',
+      url: process.env.DATABASE_URL || 'postgresql://localhost',
+      type: process.env.DATABASE_TYPE || 'postgres',
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: process.env.DATABASE_PORT || 5432,
+      username: process.env.DATABASE_USERNAME || 'prac',
+      password: process.env.DATABASE_PASSWORD || 'prac',
+      database: process.env.DATABASE_NAME || 'prac',
     },
   },
 };

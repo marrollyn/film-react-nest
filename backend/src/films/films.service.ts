@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { FilmsRepository } from '../repository/films.repository';
 import { NotFoundException } from '@nestjs/common/exceptions/not-found.exception';
+import { FilmsRepositoryPSQL } from '../repository/filmsPSQL.repository';
 
 @Injectable()
 export class FilmsService {
-  constructor(private readonly repository: FilmsRepository) {}
+  constructor(private readonly repository: FilmsRepositoryPSQL) {}
 
   async findAll() {
     const films = await this.repository.findAll();
