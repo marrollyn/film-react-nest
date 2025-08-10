@@ -1,0 +1,101 @@
+services:
+    database:
+      image: postgres:16
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+        DATABASE_USER: ${DATABASE_USER}
+        DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+        DATABASE_NAME: ${DATABASE_NAME}
+      volumes:
+        - database-data:/var/lib/postgresql/data
+        - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      ports:
+        - "5432:5432"
+      networks:
+        - internal
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+        interval: 5s
+        timeout: 5s
+        retries: 20
+        
+    pgadmin:
+      image: dpage/pgadmin4
+      container_name: pgadmin4-container
+      restart: always
+      ports:
+        - "8080:80"
+      environment:
+        PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+        PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      volumes:
+        - pgadmin-data:/var/lib/pgadmin
+      networks:
+        - internal
+  
+    frontend:
+      image: 'ghcr.io/${OWNER}/s16_frontend:latest'
+      build:
+        context: frontend
+      environment:
+        VITE_BASE_URL: /
+        VITE_API_URL: /api/afisha
+        VITE_CDN_URL: /content/afisha
+      volumes:
+        - frontend:/app/dist
+      networks:
+        - internal
+
+    backend:
+      image: 'ghcr.io/${OWNER}/s16_backend:latest'
+      container_name: backend
+      build:
+        context: backend
+      environment:
+        PORT: 3000
+        DEBUG: '*'
+        DATABASE_DRIVER: postgres
+        DATABASE_URL: postgres://database:5432/${DATABASE_NAME}
+        DATABASE_HOST: database
+        DATABASE_PORT: 5432
+        DATABASE_NAME: prac
+        DATABASE_USERNAME: prac
+        DATABASE_PASSWORD: prac
+
+        # DATABASE_DRIVER: 'postgres'
+        # # DATABASE_URL: 'postgres://database:5432/${DATABASE_NAME}'
+        # DATABASE_HOST: 'database'
+        # DATABASE_USERNAME: ${DATABASE_USER}
+        # DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+
+      ports:
+        - 3000:3000
+      networks:
+        - internal
+      depends_on:
+        database:
+          condition: service_healthy
+
+    server:
+      image: 'ghcr.io/${OWNER}/s16_server:latest'
+      build:
+        context: nginx
+      ports:
+        - 88:80
+      volumes:
+        - frontend:/var/www
+      depends_on:
+        - frontend
+        - backend
+      networks:
+        - internal
+
+volumes:
+  frontend:
+  pgadmin-data:
+  database-data:
+
+networks:
+  internal:
