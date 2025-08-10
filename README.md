@@ -1,5 +1,7 @@
 # FILM!
 
+[Деплой](https://marrollyn.nomorepartiessbs.ru)
+
 ## Установка
 
 ### MongoDB

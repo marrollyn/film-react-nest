@@ -37,8 +37,6 @@ services:
   
     frontend:
       image: 'ghcr.io/${OWNER}/s16_frontend:latest'
-      build:
-        context: frontend
       environment:
         VITE_BASE_URL: /
         VITE_API_URL: /api/afisha
@@ -51,8 +49,6 @@ services:
     backend:
       image: 'ghcr.io/${OWNER}/s16_backend:latest'
       container_name: backend
-      build:
-        context: backend
       environment:
         PORT: 3000
         DEBUG: '*'
@@ -63,13 +59,6 @@ services:
         DATABASE_NAME: prac
         DATABASE_USERNAME: prac
         DATABASE_PASSWORD: prac
-
-        # DATABASE_DRIVER: 'postgres'
-        # # DATABASE_URL: 'postgres://database:5432/${DATABASE_NAME}'
-        # DATABASE_HOST: 'database'
-        # DATABASE_USERNAME: ${DATABASE_USER}
-        # DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-
       ports:
         - 3000:3000
       networks:
@@ -80,8 +69,6 @@ services:
 
     server:
       image: 'ghcr.io/${OWNER}/s16_server:latest'
-      build:
-        context: nginx
       ports:
         - 88:80
       volumes:
