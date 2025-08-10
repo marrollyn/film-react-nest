@@ -3,7 +3,7 @@ import {
   NotFoundException,
   Injectable,
 } from '@nestjs/common';
-import { FilmsRepositoryPSQL } from 'src/repository/filmsPSQL.repository';
+import { FilmsRepositoryPSQL } from '../repository/filmsPSQL.repository';
 import { OrderDTO, TicketDTO } from './dto/order.dto';
 
 @Injectable()

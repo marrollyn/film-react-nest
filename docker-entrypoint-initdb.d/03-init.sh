@@ -1,0 +1,5 @@
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DATABASE_NAME" <<-EOSQL
+    GRANT ALL ON ALL TABLES IN SCHEMA public TO "$DATABASE_USER";
+EOSQL
